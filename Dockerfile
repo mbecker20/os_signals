@@ -12,8 +12,12 @@ RUN rm src/*.rs && rm ./target/release/deps/os_signals*
 COPY ./src ./src
 RUN cargo build --release
 
-FROM debian:buster-slim
+FROM gcr.io/distroless/cc
+
+ENV MODE=Tokio
 
 COPY --from=builder /os_signals/target/release/os_signals /
 
 CMD ["./os_signals"]
+
+STOPSIGNAL SIGTERM

@@ -22,7 +22,13 @@
 		},
 		{
 			"type": "shell",
-			"command": "docker stop os_signals && docker container rm os_signals && docker build -t os_signals . && docker run --name os_signals --stop-signal SIGINT os_signals",
+			"command": "docker stop os_signals",
+			"label": "docker stop",
+			"problemMatcher": []
+		},
+		{
+			"type": "shell",
+			"command": "docker stop os_signals && docker container rm os_signals && docker build -t os_signals . && docker run --name os_signals os_signals",
 			"label": "docker build and run",
 			"problemMatcher": []
 		}
