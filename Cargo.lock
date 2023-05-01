@@ -361,6 +361,8 @@ dependencies = [
 [[package]]
 name = "termination_signal"
 version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3de21cb16d372edf019fe3ef150b902ce3fd1abaf6c7a5093aeb7786bdfe34ec"
 dependencies = [
  "anyhow",
  "futures",

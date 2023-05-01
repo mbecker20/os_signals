@@ -21,8 +21,8 @@ fn main() -> anyhow::Result<()> {
 #[allow(unused)]
 #[derive(Deserialize, Debug, Default)]
 enum Mode {
-    Sync,
     #[default]
+    Sync,
     Tokio,
 }
 

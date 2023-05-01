@@ -21,6 +21,12 @@
 			"label": "rust: cargo check"
 		},
 		{
+			"type": "shell",
+			"command": "docker build -t os_signals . && docker run --name os_signals os_signals",
+			"label": "docker build and run dry",
+			"problemMatcher": [],
+		},
+		{
 			"label": "start test",
 			"dependsOn": [
 				"docker build and run",

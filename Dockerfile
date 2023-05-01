@@ -14,7 +14,7 @@ RUN cargo build --release
 
 FROM gcr.io/distroless/cc
 
-ENV MODE=Tokio
+ENV MODE=Sync
 
 COPY --from=builder /os_signals/target/release/os_signals /
 
