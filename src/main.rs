@@ -21,7 +21,11 @@ fn main() -> anyhow::Result<()> {
 #[allow(unused)]
 #[derive(Deserialize, Debug, Default)]
 enum Mode {
-    #[default]
     Sync,
+    #[default]
     Tokio,
 }
+
+// fn a<T>(p: T::Request) -> T::Response {
+
+// }

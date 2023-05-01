@@ -21,16 +21,30 @@
 			"label": "rust: cargo check"
 		},
 		{
-			"type": "shell",
-			"command": "docker stop os_signals",
-			"label": "docker stop",
+			"label": "start test",
+			"dependsOn": [
+				"docker build and run",
+				"docker stop"
+			],
 			"problemMatcher": []
 		},
 		{
 			"type": "shell",
 			"command": "docker stop os_signals && docker container rm os_signals && docker build -t os_signals . && docker run --name os_signals os_signals",
 			"label": "docker build and run",
-			"problemMatcher": []
+			"problemMatcher": [],
+			"presentation": {
+				"group": "test"
+			}
+		},
+		{
+			"type": "shell",
+			"command": "bash stop_container.sh",
+			"label": "docker stop",
+			"problemMatcher": [],
+			"presentation": {
+				"group": "test"
+			}
 		}
 	]
 }

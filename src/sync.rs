@@ -3,47 +3,36 @@ use std::{
     time::Duration,
 };
 
-use signal_hook::{
-    consts::{SIGINT, SIGQUIT, SIGTERM},
-    iterator::{exfiltrator::SignalOnly, SignalsInfo},
-};
+use termination_signal::sync::{term_signal_hook, ShutdownSignal};
 
 pub fn main() -> anyhow::Result<()> {
-    run_app();
+    let (termination_handle, shutdown_signal) = term_signal_hook()?;
 
-    let mut signals = SignalsInfo::<SignalOnly>::new(&[SIGINT, SIGTERM, SIGQUIT])?;
+    app(shutdown_signal);
 
-    for signal in &mut signals {
-        // Will print info about signal + where it comes from.
-        match signal {
-            SIGINT => {
-                println!("got SIGINT");
-                break;
-            }
-            SIGTERM => {
-                println!("got SIGTERM");
-                break;
-            }
-            SIGQUIT => {
-                println!("got SIGQUIT but not breaking");
-            }
-
-            unknown => {
-                println!("got unknown signal: {unknown}");
-            }
-        }
-    }
+    termination_handle.join().unwrap();
 
     Ok(())
 }
 
-fn run_app() -> std::thread::JoinHandle<()> {
+fn app(shutdown_signal: ShutdownSignal) -> std::thread::JoinHandle<()> {
     spawn(move || {
         let mut count = 0;
         loop {
-            println!("count: {count}");
-            count += 1;
-            sleep(Duration::from_secs(1));
+            if shutdown_signal.app_should_shutdown() {
+                let mut time_left = 3;
+                while time_left > 0 {
+                    println!("finishing in {time_left}");
+                    sleep(Duration::from_secs(1));
+                    time_left -= 1;
+                }
+                shutdown_signal.app_finished_shutdown();
+                break;
+            } else {
+                println!("count: {count}");
+                count += 1;
+                sleep(Duration::from_secs(1));
+            }
         }
     })
 }

@@ -1,38 +1,37 @@
 use std::time::Duration;
 
-use futures::stream::StreamExt;
-use signal_hook::consts::{SIGINT, SIGQUIT, SIGTERM};
-use signal_hook_tokio::Signals;
+use termination_signal::tokio::{term_signal_hook, ShutdownSignal};
 use tokio::task::JoinHandle;
 
 #[tokio::main]
 pub async fn main() -> anyhow::Result<()> {
-    let term_signal = term_signal_hook()?;
+    let (termination_handle, shutdown_signal) = term_signal_hook()?;
 
-    let app = tokio::spawn(async move {
-        let mut count = 0;
-        loop {
-            println!("count: {count}");
-            count += 1;
-            tokio::time::sleep(Duration::from_secs(1)).await;
-        }
-    });
+    app(shutdown_signal);
 
-    tokio::select! {
-        _ = app => {}
-        _ = term_signal => {}
-    }
+    termination_handle.await.unwrap();
 
     Ok(())
 }
 
-fn term_signal_hook() -> anyhow::Result<JoinHandle<()>> {
-    let mut signals = Signals::new(&[SIGTERM, SIGINT, SIGQUIT])?;
-    let handle = tokio::spawn(async move {
-        while let Some(signal) = signals.next().await {
-            println!("recv terminate signal: {signal}");
-            break;
+fn app(shutdown_signal: ShutdownSignal) -> JoinHandle<()> {
+    tokio::spawn(async move {
+        let mut count = 0;
+        loop {
+            if shutdown_signal.app_should_shutdown().await {
+                let mut time_left = 3;
+                while time_left > 0 {
+                    println!("finishing in {time_left}");
+                    tokio::time::sleep(Duration::from_secs(1)).await;
+                    time_left -= 1;
+                }
+                shutdown_signal.app_finished_shutdown().await;
+                break;
+            } else {
+                println!("count: {count}");
+                count += 1;
+                tokio::time::sleep(Duration::from_secs(1)).await;
+            }
         }
-    });
-    Ok(handle)
+    })
 }

@@ -198,10 +198,8 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "envy",
- "futures",
  "serde",
- "signal-hook",
- "signal-hook-tokio",
+ "termination_signal",
  "tokio",
 ]
 
@@ -358,6 +356,17 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
+]
+
+[[package]]
+name = "termination_signal"
+version = "0.1.1"
+dependencies = [
+ "anyhow",
+ "futures",
+ "signal-hook",
+ "signal-hook-tokio",
+ "tokio",
 ]
 
 [[package]]
