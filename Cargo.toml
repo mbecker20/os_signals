@@ -6,7 +6,6 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-# termination_signal = { path = "../termination_signal" }
 termination_signal = "0.1.1"
 tokio = { version = "1.28", features = ["full"] }
 anyhow = { version = "1.0" }

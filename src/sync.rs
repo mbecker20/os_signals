@@ -8,9 +8,17 @@ use termination_signal::sync::{term_signal_hook, ShutdownSignal};
 pub fn main() -> anyhow::Result<()> {
     let (termination_handle, shutdown_signal) = term_signal_hook()?;
 
-    app(shutdown_signal);
+    let app = app(shutdown_signal);
 
-    termination_handle.join().unwrap();
+    loop {
+        if app.is_finished() {
+            break;
+        }
+        if termination_handle.is_finished() {
+            break;
+        }
+        sleep(Duration::from_millis(100));
+    }
 
     Ok(())
 }

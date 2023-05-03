@@ -7,9 +7,10 @@ use tokio::task::JoinHandle;
 pub async fn main() -> anyhow::Result<()> {
     let (termination_handle, shutdown_signal) = term_signal_hook()?;
 
-    app(shutdown_signal);
-
-    termination_handle.await.unwrap();
+    tokio::select! {
+        _ = termination_handle => {}
+        _ = app(shutdown_signal) => {}
+    }
 
     Ok(())
 }
