@@ -27,7 +27,7 @@
 			"problemMatcher": [],
 		},
 		{
-			"label": "start test",
+			"label": "start dev",
 			"dependsOn": [
 				"docker build and run",
 				"docker stop"
